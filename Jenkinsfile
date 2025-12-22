@@ -1,13 +1,12 @@
 pipeline{
 	agent any
-	environment{
-		DockerImage = "sandeepkrjsr/campaign-service"
-		DockerTag = "v1.0.${BUILD_NUMBER}"
+	options{
+		buildDiscarder(logRotator(numToKeepStr: "5"))
 	}
 	stages{
 		stage("Checkout"){
 			steps{
-				git branch: "master", url: "https://github.com/sandeepkrjsr/campaign-service.git"
+				git url: "https://github.com/sandeepkrjsr/campaign-service.git", branch: "master"
 			}
 		}
 		stage("Build"){
@@ -15,10 +14,22 @@ pipeline{
 				sh "mvn clean package -DskipTests"
 			}
 		}
-		stage("Build Image"){
+		stage("Artifact"){
 			steps{
-				sh "docker build -t ${DockerImage}:${DockerTag} ."
+				sh "cp target/*.jar target/campaign-service-${BUILD_NUMBER}.jar"
+				archiveArtifacts artifacts: "target/campaign-service-${BUILD_NUMBER}.jar", fingerprint: true
 			}
+		}
+	}
+	post{
+		always{
+			cleanWs()
+		}
+		success{
+			echo "Build successful"
+		}
+		failure{
+			echo "Build failed. Please check the logs."
 		}
 	}
 }
