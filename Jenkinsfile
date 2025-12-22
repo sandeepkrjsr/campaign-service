@@ -3,6 +3,11 @@ pipeline{
 	options{
 		buildDiscarder(logRotator(numToKeepStr: "5"))
 	}
+	environment{
+		Name = "campaign-service"
+		Tag = "v1.0.${BUILD_NUMBER}"
+		Image = "sandeepkrjsr/campaign-service"
+	}
 	stages{
 		stage("Checkout"){
 			steps{
@@ -16,8 +21,8 @@ pipeline{
 		}
 		stage("Artifact"){
 			steps{
-				sh "cp target/*.jar target/campaign-service-${BUILD_NUMBER}.jar"
-				archiveArtifacts artifacts: "target/campaign-service-${BUILD_NUMBER}.jar", fingerprint: true
+				sh "cp target/*.jar target/${Name}-${Tag}.jar"
+				archiveArtifacts artifacts: "target/${Name}-${Tag}.jar", fingerprint: true
 			}
 		}
 	}
