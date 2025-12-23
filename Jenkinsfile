@@ -30,9 +30,9 @@ pipeline{
 				sh "docker build -t ${Name}:${Tag} ."
 			}
 		}
-		stage('Push Image'){
+		stage('Deploy'){
 			steps{
-				sh "docker push ${Name}:${Tag}"
+				sh "docker compose up -d --pull always"
 			}
 		}
 	}
