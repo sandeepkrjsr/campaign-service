@@ -15,12 +15,12 @@ pipeline{
 		booleanParam(
 			name: 'BUILD_DOCKER_IMAGE', 
 			defaultValue: false, 
-			description: 'Build the project'
+			description: 'Build docker image'
 		)
 		booleanParam(
 			name: 'PUSH_DOCKER_IMAGE', 
 			defaultValue: false, 
-			description: 'Build the project'
+			description: 'Push docker image to registry'
 		)
 		booleanParam(
 			name: 'DEPLOY_CONTAINER', 
@@ -58,7 +58,11 @@ pipeline{
                 expression { params.PUSH_DOCKER_IMAGE }
             }
 			steps{
-				sh "docker push ${Name}:${Tag}"
+				withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh "echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin"
+                }
+				sh "docker tag ${Name}:${Tag} ${Image}:${Tag}"
+				sh "docker push ${Image}:${Tag}"
 			}
 		}
 		stage('Container Deployment'){

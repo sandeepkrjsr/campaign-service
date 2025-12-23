@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
   campaign-service:
     build: .
-    image: sandeepkrjsr/campaign-service:v1.0.${BUILD_NUMBER}
-    container_name: campaign-service
+    image: campaign-service:v1.0.${BUILD_NUMBER}
+    container_name: campaign-service-v1.0.${BUILD_NUMBER}
     ports:
       - "8080:8080"
     restart: always
