@@ -14,17 +14,17 @@ pipeline{
 	parameters{
 		booleanParam(
 			name: 'BUILD_DOCKER_IMAGE', 
-			defaultValue: true, 
+			defaultValue: false, 
 			description: 'Build the project'
 		)
 		booleanParam(
 			name: 'PUSH_DOCKER_IMAGE', 
-			defaultValue: true, 
+			defaultValue: false, 
 			description: 'Build the project'
 		)
 		booleanParam(
 			name: 'DEPLOY_CONTAINER', 
-			defaultValue: true, 
+			defaultValue: false, 
 			description: 'Deploy container after build'
 		)
 	}
@@ -46,24 +46,27 @@ pipeline{
 			}
 		}
 		stage('Build Docker Image'){
+			when{
+                expression { params.BUILD_DOCKER_IMAGE }
+            }
 			steps{
-				if(params.BUILD_DOCKER_IMAGE){
-					sh "docker build -t ${Name}:${Tag} ."
-				}
+				sh "docker build -t ${Name}:${Tag} ."
 			}
 		}
-		stage('Push Image'){
+		stage('Push Docker Image'){
+			when{
+                expression { params.PUSH_DOCKER_IMAGE }
+            }
 			steps{
-				if(params.PUSH_DOCKER_IMAGE){
-					sh "docker push ${Name}:${Tag}"
-				}
+				sh "docker push ${Name}:${Tag}"
 			}
 		}
 		stage('Container Deployment'){
+			when{
+                expression { params.DEPLOY_CONTAINER }
+            }
 			steps{
-				if(params.DEPLOY_CONTAINER){
-					sh "docker-compose up -d --pull always"
-				}
+				sh "docker-compose up -d --pull always"
 			}
 		}
 	}
