@@ -30,6 +30,11 @@ pipeline{
 				sh "docker build -t ${Name}:${Tag} ."
 			}
 		}
+		stage('Push Image'){
+			steps{
+				sh "docker push ${Name}:${Tag}"
+			}
+		}
 	}
 	post{
 		always{
