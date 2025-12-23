@@ -14,15 +14,20 @@ pipeline{
 				git url: "https://github.com/sandeepkrjsr/campaign-service.git", branch: "master"
 			}
 		}
-		stage("Build"){
+		stage("Build JAR"){
 			steps{
 				sh "mvn clean package -DskipTests"
 			}
 		}
-		stage("Artifact"){
+		stage("Build Artifact"){
 			steps{
 				sh "cp target/*.jar target/${Name}-${Tag}.jar"
 				archiveArtifacts artifacts: "target/${Name}-${Tag}.jar", fingerprint: true
+			}
+		}
+		stage('Build Docker Image'){
+			steps{
+				sh "docker build -t ${DockerImage}:${DockerTag} ."
 			}
 		}
 	}
