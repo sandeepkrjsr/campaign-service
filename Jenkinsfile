@@ -32,7 +32,7 @@ pipeline{
 		}
 		stage('Deploy'){
 			steps{
-				sh "docker compose up -d --pull always"
+				sh "docker-compose up -d --pull always"
 			}
 		}
 	}
