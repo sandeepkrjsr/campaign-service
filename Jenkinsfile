@@ -75,9 +75,9 @@ pipeline{
 		}
 	}
 	post{
-		always{
+		/*always{
 			cleanWs()
-		}
+		}*/
 		success{
 			echo "Build and Deployed Successfully: $Name:$Tag"
 		}
